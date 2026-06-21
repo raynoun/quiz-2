@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Islam Complet — Cours de Raynoun</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #2e7d5e;
+  --green-light: #3fa37a;
+  --green-pale: #e8f5f0;
+  --gold: #c9922a;
+  --gold-light: #f5e6c8;
+  --red-pale: #fdf0ee;
+  --red: #c94a3a;
+  --bg: #faf9f5;
+  --card: #ffffff;
+  --text: #1a1a1a;
+  --muted: #6b7280;
+  --border: #e5e2d8;
+  --radius: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image: radial-gradient(circle at 20% 20%, #e8f5f0 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, #f5e6c8 0%, transparent 50%);
+}
+.wrap { max-width: 620px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+/* SCREENS */
+.screen { display: none; animation: fadeUp 0.35s ease; }
+.screen.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+/* HOME */
+.home-header { text-align: center; padding: 2.5rem 0 1.5rem; }
+.mosque-icon { font-size: 52px; margin-bottom: 1rem; display: block; }
+.home-title { font-family: 'Amiri', serif; font-size: 2rem; color: var(--green); margin-bottom: 0.25rem; }
+.home-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+.arabic-main { font-family: 'Amiri', serif; font-size: 1.5rem; color: var(--gold); direction: rtl; line-height: 2; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+}
+.themes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1.5rem; }
+.theme-chip {
+  background: var(--green-pale);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.82rem;
+  color: var(--green);
+  font-weight: 700;
+  display: flex; align-items: center; gap: 6px;
+}
+label.field-label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.4rem; font-weight: 600; }
+input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+  outline: none;
+}
+input[type="text"]:focus { border-color: var(--green); }
+.btn-start {
+  width: 100%;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem;
+  font-size: 1.05rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+.btn-start:hover { background: var(--green-light); }
+.btn-start:active { transform: scale(0.98); }
+
+/* TABS */
+.tabs { display: flex; gap: 6px; margin-bottom: 1rem; }
+.tab {
+  flex: 1;
+  padding: 0.55rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.tab.active { background: var(--green); color: white; border-color: var(--green); }
+
+/* RANKING */
+.rank-item { display: flex; align-items: center; gap: 12px; padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
+.rank-item:last-child { border-bottom: none; }
+.rank-badge {
+  width: 34px; height: 34px; border-radius: 50%; display: flex; align-items:center; justify-content:center;
+  font-size: 0.9rem; font-weight: 800; flex-shrink: 0;
+}
+.rank-badge.gold { background: #f5e6c8; color: #c9922a; }
+.rank-badge.silver { background: #eee; color: #777; }
+.rank-badge.bronze { background: #f5ece6; color: #b05e32; }
+.rank-badge.other { background: var(--green-pale); color: var(--green); font-size: 0.8rem; }
+.rank-name { flex: 1; font-weight: 700; font-size: 0.95rem; }
+.rank-right { text-align: right; }
+.rank-score { font-weight: 800; color: var(--green); font-size: 1rem; }
+.rank-time { font-size: 0.75rem; color: var(--muted); }
+.empty { text-align: center; color: var(--muted); font-size: 0.9rem; padding: 1.5rem 0; }
+
+/* QUIZ SCREEN */
+.quiz-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+.q-counter { font-size: 0.85rem; font-weight: 700; color: var(--muted); }
+.timer-pill {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.progress { background: var(--border); border-radius: 99px; height: 6px; margin-bottom: 1.25rem; }
+.progress-bar { background: linear-gradient(90deg, var(--green), var(--green-light)); border-radius: 99px; height: 6px; transition: width 0.4s ease; }
+.q-theme { font-size: 0.78rem; font-weight: 800; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+.q-text { font-size: 1.1rem; font-weight: 700; line-height: 1.55; margin-bottom: 1.25rem; color: var(--text); }
+.options { display: grid; gap: 0.6rem; }
+.opt {
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.15s;
+}
+.opt:hover:not(:disabled) { border-color: var(--green); background: var(--green-pale); }
+.opt:disabled { cursor: default; }
+.opt.correct { border-color: var(--green); background: var(--green-pale); color: var(--green); }
+.opt.wrong { border-color: var(--red); background: var(--red-pale); color: var(--red); }
+.opt-letter {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+  transition: all 0.15s;
+}
+.correct .opt-letter { background: var(--green); color: white; }
+.wrong .opt-letter { background: var(--red); color: white; }
+.feedback-box {
+  margin-top: 0.85rem;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  display: none;
+}
+.feedback-box.show { display: block; }
+.feedback-box.ok { background: var(--green-pale); color: var(--green); border: 1px solid #a8d5c2; }
+.feedback-box.ko { background: var(--red-pale); color: var(--red); border: 1px solid #f0c0b8; }
+.btn-next {
+  width: 100%;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.85rem;
+  font-size: 0.95rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 0.85rem;
+  display: none;
+  transition: background 0.2s;
+}
+.btn-next.show { display: block; }
+.btn-next:hover { background: var(--green-light); }
+
+/* RESULT */
+.result-hero { text-align: center; padding: 1.5rem 0 0.5rem; }
+.result-emoji { font-size: 60px; display: block; margin-bottom: 0.5rem; }
+.result-score { font-family: 'Amiri', serif; font-size: 3.5rem; color: var(--green); font-weight: 700; }
+.result-pct { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.25rem; }
+.result-msg { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+.result-time { font-size: 0.85rem; color: var(--muted); }
+.review-item { padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; line-height: 1.5; }
+.review-item:last-child { border-bottom: none; }
+.review-theme { font-size: 0.72rem; color: var(--gold); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+.review-q { color: var(--text); font-weight: 600; }
+.review-answer { font-size: 0.82rem; margin-top: 2px; }
+
+/* CONFETTI */
+.confetti-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+.confetti-piece {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  animation: confettiFall 2.5s ease-in forwards;
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <div class="home-header">
+      <span class="mosque-icon">🕌</span>
+      <h1 class="home-title">Quiz Islam Complet</h1>
+      <p class="home-sub">Cours de Raynoun · 51 questions · 50 à 80 min</p>
+      <div class="arabic-main">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    </div>
+
+    <div class="card">
+      <div class="themes-grid">
+        <div class="theme-chip">🌙 Calendrier Musulman</div>
+        <div class="theme-chip">☀️ Vie du Prophète ﷺ</div>
+        <div class="theme-chip">🤲 Doua de Guérison</div>
+        <div class="theme-chip">🍽️ Douas du Repas</div>
+        <div class="theme-chip">✨ Noms d'Allah</div>
+        <div class="theme-chip">🌿 Prophète Adam</div>
+        <div class="theme-chip">📿 La Shahada</div>
+        <div class="theme-chip">✨ 4 Paroles Aimées</div>
+      </div>
+      <label class="field-label">Ton prénom :</label>
+      <input type="text" id="name-input" placeholder="Écris ton prénom ici..." maxlength="30" />
+      <button class="btn-start" onclick="startQuiz()">Bismillah — Commencer ✨</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab(this,'ranking')">🏆 Classement</button>
+      <button class="tab" onclick="showTab(this,'info')">📖 Le quiz</button>
+    </div>
+    <div id="tab-ranking" class="card">
+      <div id="ranking-list"><p class="empty">Sois le premier à faire le quiz !</p></div>
+    </div>
+    <div id="tab-info" class="card" style="display:none;">
+      <p style="font-size:0.9rem; color:var(--muted); line-height:1.9;">
+        Ce quiz de <strong style="color:var(--text);">51 questions</strong> couvre toutes les leçons du cours :<br><br>
+        🌙 <strong style="color:var(--text);">Calendrier Musulman</strong> — l'Hégire, les 12 mois, lunaire vs solaire<br>
+        ☀️ <strong style="color:var(--text);">Vie du Prophète Muhammad ﷺ</strong> — naissance, famille, révélation, Hégire<br>
+        🤲 <strong style="color:var(--text);">Doua de Guérison</strong> — demander la santé à Allah<br>
+        🍽️ <strong style="color:var(--text);">Douas du Repas</strong> — avant, pendant et après manger<br>
+        ✨ <strong style="color:var(--text);">Les Noms d'Allah</strong> — Ar-Rahmân, Ar-Rahîm, Al-Malik, Al-Quddûs, As-Salâm, Al-Mu'min<br>
+        🌿 <strong style="color:var(--text);">Prophète Adam (ع)</strong> — création, Hawwa, Iblis, repentir<br>
+        📿 <strong style="color:var(--text);">La Shahada</strong> — sa traduction, ses 7 raisons, ses 6 moments<br>
+        ✨ <strong style="color:var(--text);">4 Paroles Aimées par Allah</strong> — Subhan Allah, Alhamdulillah, La ilaha illa Allah, Allahu Akbar<br><br>
+        Le classement tient compte du <strong style="color:var(--green);">score</strong> puis du <strong style="color:var(--green);">temps</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <span class="q-counter" id="q-counter">Question 1 / 51</span>
+      <span class="timer-pill" id="timer">⏱ 00:00</span>
+    </div>
+    <div class="progress"><div class="progress-bar" id="progress-bar" style="width:3%"></div></div>
+    <div class="card">
+      <p class="q-theme" id="q-theme"></p>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback-box" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Question suivante →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen">
+    <div class="result-hero">
+      <span class="result-emoji" id="r-emoji"></span>
+      <div class="result-score" id="r-score"></div>
+      <p class="result-pct" id="r-pct"></p>
+      <p class="result-msg" id="r-msg"></p>
+      <p class="result-time" id="r-time"></p>
+    </div>
+    <div style="margin: 1.25rem 0;">
+      <button class="btn-start" onclick="goHome()">Voir le classement 🏆</button>
+    </div>
+    <div class="card">
+      <p style="font-size:0.8rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.75rem;">Révision de tes réponses</p>
+      <div id="review-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONFETTI CONTAINER -->
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+// ⚙️ Colle ici l'URL de ton application web Google Apps Script (se termine par /exec)
+// Tant que cette URL n'est pas renseignée, le quiz fonctionne normalement
+// mais n'envoie rien vers Google Sheets (seul le classement local reste actif).
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzkl6k9E2ZtkqjObeURmfDcNK6H45lvhoCul4-JFg8P0o1hl_0uzUhaQhrvDoV6HgTacw/exec";
+
+const QUESTIONS = [
+  {t:"🌙 Calendrier Musulman", q:"Comment les Arabes nommaient-ils les années avant l'Islam ?", o:["Avec des chiffres","Selon des événements marquants","Avec les noms des rois","Ils ne comptaient pas les années"], a:1, tip:"Les Arabes nommaient les années selon des événements marquants, comme « l'Année de l'Éléphant ». Il n'y avait pas d'année de référence avant l'Hégire !"},
+  {t:"🌙 Calendrier Musulman", q:"Que s'est-il passé pendant « l'Année de l'Éléphant » ?", o:["La construction de la Kaaba","Une armée avec des éléphants attaqua La Mecque","La naissance du calendrier musulman","Une grande sécheresse"], a:1, tip:"En 570 apr. J.-C., une armée avec des éléphants attaqua La Mecque. C'est aussi l'année de naissance du Prophète Muhammad ﷺ !"},
+  {t:"🌙 Calendrier Musulman", q:"Qu'est-ce que l'Hégire ?", o:["Le pèlerinage à La Mecque","Le départ du Prophète ﷺ de La Mecque vers Médine","La première révélation du Coran","La construction de la mosquée de Médine"], a:1, tip:"L'Hégire, c'est le départ du Prophète ﷺ de La Mecque vers Médine en 622, avec ses compagnons, pour pouvoir pratiquer leur religion librement."},
+  {t:"🌙 Calendrier Musulman", q:"Qui a décidé que l'année de l'Hégire serait l'An 1 du calendrier islamique ?", o:["Le Prophète Muhammad ﷺ lui-même","Le calife Omar","Le calife Abu Bakr","Les anges"], a:1, tip:"C'est le calife Omar (qu'Allah l'agrée) qui a décidé que ce voyage historique serait l'An 1 du calendrier islamique."},
+  {t:"🌙 Calendrier Musulman", q:"Quel est le nom du 9e mois du calendrier musulman, le mois du jeûne ?", o:["Chawwal","Rajab","Ramadan","Mouharram"], a:2, tip:"Ramadan est le 9e mois du calendrier islamique : c'est le mois du jeûne !"},
+  {t:"🌙 Calendrier Musulman", q:"Pourquoi le Ramadan ne tombe-t-il pas à la même date chaque année (dans notre calendrier) ?", o:["Parce que les musulmans changent la date","Parce que l'année lunaire est plus courte de 10-11 jours","Parce que c'est interdit de jeûner deux fois à la même date","Parce que la Lune n'existe plus"], a:1, tip:"Le calendrier musulman est lunaire (354-355 jours) alors que le calendrier grégorien est solaire (365-366 jours). Cette différence de 10-11 jours fait reculer les fêtes chaque année."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Dans quelle ville est né le Prophète Muhammad ﷺ ?", o:["Médine","La Mecque","Jérusalem","Damas"], a:1, tip:"Le Prophète Muhammad ﷺ est né à La Mecque, le 12 Rabi' al-Awwal, l'année de l'Éléphant (~570 apr. J.-C.)."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Comment s'appelait le père du Prophète Muhammad ﷺ ?", o:["Abu Talib","Abd Al-Muttalib","Abdullah","Abu Bakr"], a:2, tip:"Son père s'appelait Abdullah ; il est décédé avant la naissance du Prophète ﷺ. Sa mère s'appelait Aminah."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"À quel âge le Prophète ﷺ a-t-il perdu sa mère Aminah ?", o:["À sa naissance","À 6 ans","À 8 ans","À 12 ans"], a:1, tip:"Sa mère Aminah est décédée quand il avait 6 ans. Il fut ensuite recueilli par son grand-père Abd Al-Muttalib, puis par son oncle Abu Talib."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Quel surnom donnait-on au jeune Muhammad ﷺ à cause de son honnêteté ?", o:["Al-Amine, « Le Fidèle »","As-Sadiq, « Le Véridique »","Al-Karim, « Le Généreux »","Al-Hakim, « Le Sage »"], a:0, tip:"On l'appelait Al-Amine, « Le Fidèle », car il était connu de tous pour son honnêteté."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Quel fut le premier mot révélé par l'ange Jibril au Prophète ﷺ ?", o:["« Crois ! »","« Prie ! »","« Lis ! »","« Pardonne ! »"], a:2, tip:"Le premier mot révélé fut « Lis ! », apporté par l'ange Jibril dans la grotte de Hirâ, quand le Prophète avait 40 ans."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Qui a réconforté le Prophète ﷺ après la première révélation ?", o:["Son oncle Abu Talib","Sa femme Khadijah","Le calife Omar","Abu Bakr"], a:1, tip:"Le Prophète rentra en tremblant après cette première révélation, et c'est sa femme Khadijah qui le réconforta."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Combien d'enfants le Prophète ﷺ a-t-il eus avec Khadijah ?", o:["4 enfants","5 enfants","7 enfants","10 enfants"], a:2, tip:"Ils ont eu 7 enfants : 3 garçons (Qassim, Abdullah, Ibrahim) et 4 filles (Fatimah, Zaynab, Ruqayyah, Umm Kulthum)."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Avec qui le Prophète ﷺ a-t-il fait le voyage de l'Hégire ?", o:["Avec Khadijah","Avec Abu Bakr","Avec le calife Omar","Tout seul"], a:1, tip:"Il a quitté La Mecque avec son fidèle compagnon Abu Bakr, et ils se sont cachés 3 jours dans la grotte de Thawr avant d'arriver à Médine."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"À quel âge le Prophète Muhammad ﷺ est-il décédé ?", o:["53 ans","60 ans","63 ans","70 ans"], a:2, tip:"Il est décédé à 63 ans, à Médine, en l'an 632 après J.-C., après 23 ans de prophétie."},
+  {t:"☀️ Vie du Prophète ﷺ", q:"Que dit-on après avoir prononcé le nom du Prophète Muhammad ﷺ ?", o:["Alhamdulillah","Insha Allah","Salla Allahu alayhi wa salam","Subhan Allah"], a:2, tip:"Chaque fois qu'on dit son nom, on dit « Salla Allahu alayhi wa salam » — que la paix et les bénédictions d'Allah soient sur lui."},
+  {t:"🤲 Doua de Guérison", q:"Que demande-t-on à Allah dans la doua de guérison ?", o:["La richesse","La santé du corps, de l'ouïe et de la vue","Un bon repas","La pluie"], a:1, tip:"On dit « Allâhumma 'âfini fi badani, fi sam'i, fi basari » — Ô Allah, accorde-moi la santé dans mon corps, mon ouïe et ma vue."},
+  {t:"🤲 Doua de Guérison", q:"Quand doit-on réciter la doua de guérison ?", o:["Seulement le vendredi","Le matin et le soir","Seulement quand on est malade","Une seule fois dans sa vie"], a:1, tip:"Cette doua se récite le matin et le soir (3 fois le soir), pour demander à Allah la santé chaque jour."},
+  {t:"🤲 Doua de Guérison", q:"Par quelle phrase se termine la doua de guérison ?", o:["« Allahu akbar »","« Lâ ilâha illâ ant »","« Subhan Allah »","« Insha Allah »"], a:1, tip:"La doua se termine par « Lâ ilâha illâ ant » — Il n'y a de dieu que Toi."},
+  {t:"🤲 Doua de Guérison", q:"Quel beau nom d'Allah est lié à la guérison ?", o:["Ar-Rahmân","Al-Malik","Ash-Shâfi, Le Guérisseur","As-Salâm"], a:2, tip:"Allah est Ash-Shâfi, Le Guérisseur. C'est Lui qui guérit les cœurs et les corps."},
+  {t:"🍽️ Douas du Repas", q:"Que dit-on avant de commencer à manger ?", o:["Alhamdulillah","Bismillahi wa 'alâ barakati-llâh","Subhan Allah","Allahu akbar"], a:1, tip:"« Bismillahi wa 'alâ barakati-llâh » signifie « Au nom d'Allah et avec la bénédiction d'Allah ». On le dit avant de manger."},
+  {t:"🍽️ Douas du Repas", q:"Avec quelle main faut-il manger ?", o:["La main gauche","Les deux mains","La main droite","Peu importe"], a:2, tip:"On mange avec la main droite, en disant Bismillah avant de commencer : c'est la Sunna du Prophète ﷺ."},
+  {t:"🍽️ Douas du Repas", q:"Que dit-on si on a oublié de dire Bismillah avant de manger ?", o:["On ne dit rien","« Bismillahi awwalahu wa âkhirahu » dès qu'on s'en souvient","On arrête de manger","On recommence le repas"], a:1, tip:"Si on oublie, on dit dès qu'on s'en souvient : « Bismillahi awwalahu wa âkhirahu » — Au nom d'Allah, au début et à la fin."},
+  {t:"🍽️ Douas du Repas", q:"Que dit-on après avoir fini de manger ?", o:["« Alhamdulillah » seulement","Une doua de remerciement à Allah pour la nourriture","Rien du tout","« Bismillah »"], a:1, tip:"On dit « Alhamdulillahi-llathî at'amanî hâthâ... » pour remercier Allah de nous avoir nourris, sans force ni puissance de notre part."},
+  {t:"🍽️ Douas du Repas", q:"Que signifie « min ghayri hawlin minnî wa lâ quwwah », à la fin de la doua après le repas ?", o:["Sans force ni puissance de ma part","Avec beaucoup d'efforts","Grâce à mon travail","Pour toujours"], a:0, tip:"Cela signifie que c'est Allah qui nous a nourris, sans aucune force ni puissance de notre part : tout vient de Lui !"},
+  {t:"✨ Les Noms d'Allah", q:"Que signifie « Ar-Rahmân » (الرَّحْمَنُ) ?", o:["Le Roi","Le Tout Miséricordieux","La Paix","Le Très Saint"], a:1, tip:"Ar-Rahmân signifie Le Tout Miséricordieux. C'est le premier des beaux noms d'Allah (Asma ul Husna)."},
+  {t:"✨ Les Noms d'Allah", q:"Que signifie « Ar-Rahîm » (الرَّحِيمُ) ?", o:["Le Gardien de la Foi","Le Très Miséricordieux","Le Roi","Le Très Saint"], a:1, tip:"Ar-Rahîm signifie Le Très Miséricordieux. Ces deux noms apparaissent ensemble au début de chaque sourate du Coran (Bismillah)."},
+  {t:"✨ Les Noms d'Allah", q:"Que signifie « Al-Malik » (الْمَلِكُ) ?", o:["Le Roi","La Paix","Le Miséricordieux","Le Guérisseur"], a:0, tip:"Al-Malik signifie Le Roi. Allah est le Roi de tout ce qui existe, dans ce monde et dans l'au-delà."},
+  {t:"✨ Les Noms d'Allah", q:"Que signifie « Al-Quddûs » (الْقُدُّوسُ) ?", o:["Le Roi","Le Créateur","Le Très Saint","Le Pardonneur"], a:2, tip:"Al-Quddûs signifie Le Très Saint. Allah est parfaitement pur, sans aucun défaut."},
+  {t:"✨ Les Noms d'Allah", q:"Que signifie « As-Salâm » (السَّلاَمُ) ?", o:["La Paix","Le Juge","Le Sage","Le Fort"], a:0, tip:"As-Salâm signifie La Paix. Allah est la source de toute paix et de toute sécurité."},
+  {t:"✨ Les Noms d'Allah", q:"Que signifie « Al-Mu'min » (الْمُؤْمِنُ) ?", o:["Le Tout Puissant","Le Gardien de la Foi","Le Généreux","Le Patient"], a:1, tip:"Al-Mu'min signifie Le Gardien de la Foi. Allah protège et rassure Ses serviteurs."},
+  {t:"🌿 Prophète Adam (ع)", q:"De quoi Allah a-t-il créé le Prophète Adam ?", o:["De l'eau","De lumière","D'argile","De feu"], a:2, tip:"Allah a créé Adam à partir d'argile, puis lui a soufflé la vie. C'est le tout premier être humain sur Terre !"},
+  {t:"🌿 Prophète Adam (ع)", q:"Qu'a appris Allah à Adam en signe d'honneur ?", o:["Les noms de toutes les choses","Comment voler","Toutes les langues du monde","Comment nager"], a:0, tip:"Allah a enseigné à Adam les noms de toutes les choses, ce qui montre l'honneur qu'Il lui a accordé."},
+  {t:"🌿 Prophète Adam (ع)", q:"Comment les anges ont-ils montré du respect envers Adam ?", o:["Ils lui ont parlé","Ils se sont prosternés devant lui","Ils lui ont offert des cadeaux","Ils ont chanté pour lui"], a:1, tip:"Les anges se sont prosternés devant Adam pour lui montrer du respect, sur ordre d'Allah."},
+  {t:"🌿 Prophète Adam (ع)", q:"Pourquoi Iblis a-t-il refusé de se prosterner devant Adam ?", o:["Il avait peur","Il ne l'avait pas vu","Par orgueil","Il était fatigué"], a:2, tip:"Iblis a refusé par orgueil. C'est pour cela qu'il est devenu l'ennemi de tous les humains."},
+  {t:"🌿 Prophète Adam (ع)", q:"Comment s'appelle l'épouse du Prophète Adam ?", o:["Maryam","Hawwa","Khadijah","Aminah"], a:1, tip:"La femme d'Adam s'appelle Hawwa. Ils vivaient ensemble au Paradis avant l'épreuve du fruit interdit."},
+  {t:"🌿 Prophète Adam (ع)", q:"Qu'a fait Adam après avoir commis sa faute au Paradis ?", o:["Il s'est caché","Il a accusé Hawwa","Il a demandé pardon à Allah avec sincérité","Il n'a rien fait"], a:2, tip:"Adam a immédiatement regretté et a demandé pardon à Allah avec tout son cœur. Allah lui a pardonné !"},
+  {t:"🌿 Prophète Adam (ع)", q:"Quelle est la leçon la plus importante de l'histoire d'Adam ?", o:["Il ne faut jamais faire d'erreur","Allah pardonne toujours si on est sincère","Les anges sont plus forts que les humains","Il faut éviter les arbres"], a:1, tip:"C'est la leçon la plus importante : tout le monde fait des erreurs, mais Allah pardonne toujours si on est sincère."},
+  {t:"📿 La Shahada", q:"Quelle est la traduction de la Shahada en français ?", o:["Allah est le plus grand et le seul Maître","J'atteste qu'il n'y a de divinité digne d'adoration qu'Allah et que Muhammad est Son messager","Louange à Allah, Seigneur des mondes","Au nom d'Allah, le Tout Miséricordieux"], a:1, tip:"La Shahada signifie : « J'atteste qu'il n'y a de divinité digne d'adoration qu'Allah, et j'atteste que Muhammad est le Messager d'Allah »."},
+  {t:"📿 La Shahada", q:"Quel est le 1er pilier de l'Islam ?", o:["La prière (Salat)","Le jeûne (Siyam)","La Shahada","Le pèlerinage (Hajj)"], a:2, tip:"Comme une maison a besoin de piliers pour tenir debout, l'Islam a 5 piliers. La Shahada est le premier et le plus important !"},
+  {t:"📿 La Shahada", q:"Combien de raisons explique-t-on pour dire la Shahada ?", o:["3 raisons","5 raisons","7 raisons","10 raisons"], a:2, tip:"Il y a 7 raisons importantes de dire la Shahada : 1er pilier, meilleure des paroles, porte de l'Islam, clé du Paradis…"},
+  {t:"📿 La Shahada", q:"On compare souvent la Shahada à une clé magique. Pour ouvrir quelle porte ?", o:["La porte de la mosquée","La porte du Paradis","La porte de la maison","La porte du cœur"], a:1, tip:"La Shahada est comme une clé magique pour ouvrir la porte du Paradis, quand on la dit avec sincérité."},
+  {t:"📿 La Shahada", q:"Combien de moments importants sont cités pour dire la Shahada ?", o:["3 moments","4 moments","6 moments","8 moments"], a:2, tip:"Il y a 6 moments : avant de dormir, avant de mourir, pour entrer dans l'Islam, après les ablutions, pendant la prière, et tous les jours matin et soir."},
+  {t:"📿 La Shahada", q:"Que fait-on de son doigt après les ablutions (wudu), en disant la Shahada ?", o:["On le pose sur le cœur","On lève l'index","On le met sur la bouche","On le cache"], a:1, tip:"Après le wudu, on lève l'index et on dit la Shahada."},
+  {t:"📿 La Shahada", q:"Dans quelle partie de la prière dit-on la Shahada ?", o:["Le Takbir","Le Tachahoud","Le Sajda","Le Roukou"], a:1, tip:"Pendant la prière, dans le Tachahoud (position assise), on dit la Shahada en levant l'index."},
+  {t:"✨ 4 Paroles Aimées", q:"Que signifie « Subhan Allah » ?", o:["Merci Allah","Gloire à Allah, Allah est parfait","Allah est le plus grand","Il n'y a de dieu qu'Allah"], a:1, tip:"Subhan Allah signifie « Gloire à Allah » ou « Allah est parfait »."},
+  {t:"✨ 4 Paroles Aimées", q:"Quand dit-on « Subhan Allah » ?", o:["Quand on voit quelque chose de beau dans la création d'Allah","Après avoir mangé","Pendant le sommeil","Quand on a peur"], a:0, tip:"On dit Subhan Allah quand on voit quelque chose de beau dans la création d'Allah, comme un arc-en-ciel ou un papillon."},
+  {t:"✨ 4 Paroles Aimées", q:"Que signifie « Alhamdulillah » ?", o:["Allah est le plus grand","Louange à Allah, merci Allah","Gloire à Allah","Il n'y a de dieu qu'Allah"], a:1, tip:"Alhamdulillah signifie « Louange à Allah » ou « Merci Allah ». On le dit pour remercier Allah de tout ce qu'Il nous donne."},
+  {t:"✨ 4 Paroles Aimées", q:"Que signifie « Allahu Akbar » ?", o:["Allah est le Plus Grand","Allah est miséricordieux","Il n'y a de dieu qu'Allah","Gloire à Allah"], a:0, tip:"Allahu Akbar signifie « Allah est le Plus Grand ». On le dit pendant la prière, ou devant quelque chose d'impressionnant."},
+  {t:"✨ 4 Paroles Aimées", q:"Parmi les 4 paroles aimées par Allah, laquelle est aussi la meilleure de toutes les paroles ?", o:["Subhan Allah","Alhamdulillah","La ilaha illa Allah","Allahu Akbar"], a:2, tip:"« La ilaha illa Allah » (Il n'y a de divinité qu'Allah) est la meilleure de toutes les paroles. On la connaît déjà : c'est une partie de la Shahada !"},
+  {t:"✨ 4 Paroles Aimées", q:"Que dit-on généralement après avoir bien mangé, pour remercier Allah ?", o:["Allahu Akbar","Alhamdulillah","Subhan Allah","Astaghfirullah"], a:1, tip:"On dit Alhamdulillah après avoir mangé, ou quand on est content, ou quand on a de bonnes notes : pour remercier Allah de tout."},
+];
+
+let curQ = 0, score = 0, answered = false, t0 = 0, timerInt = null, name = '', results = [];
+const letters = ['A','B','C','D'];
+
+function startQuiz() {
+  name = document.getElementById('name-input').value.trim();
+  if (!name) { document.getElementById('name-input').focus(); return; }
+  curQ = 0; score = 0; answered = false; results = [];
+  t0 = Date.now();
+  timerInt = setInterval(() => {
+    const s = Math.floor((Date.now()-t0)/1000);
+    document.getElementById('timer').textContent = '⏱ ' + pad(Math.floor(s/60)) + ':' + pad(s%60);
+  }, 1000);
+  show('screen-quiz');
+  renderQ();
+}
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function renderQ() {
+  const q = QUESTIONS[curQ];
+  document.getElementById('q-counter').textContent = 'Question ' + (curQ+1) + ' / ' + QUESTIONS.length;
+  document.getElementById('q-theme').textContent = q.t;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress-bar').style.width = ((curQ+1)/QUESTIONS.length*100) + '%';
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.o.forEach((o,i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + o;
+    b.onclick = () => pick(i);
+    opts.appendChild(b);
+  });
+  document.getElementById('feedback').className = 'feedback-box';
+  document.getElementById('btn-next').className = 'btn-next';
+  answered = false;
+}
+
+function pick(idx) {
+  if (answered) return;
+  answered = true;
+  const q = QUESTIONS[curQ];
+  const ok = idx === q.a;
+  if (ok) score++;
+  results.push({q:q.q, t:q.t, ok, chosen:q.o[idx], right:q.o[q.a], tip:q.tip});
+  document.querySelectorAll('.opt').forEach((b,i) => {
+    b.disabled = true;
+    if (i === q.a) b.classList.add('correct');
+    else if (i === idx && !ok) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback-box show ' + (ok ? 'ok' : 'ko');
+  fb.innerHTML = (ok ? '<strong>✓ Bonne réponse !</strong> ' : '<strong>✗ Pas tout à fait…</strong> ') + q.tip;
+  document.getElementById('btn-next').className = 'btn-next show';
+}
+
+function nextQuestion() {
+  curQ++;
+  if (curQ >= QUESTIONS.length) { finish(); return; }
+  renderQ();
+}
+
+function finish() {
+  clearInterval(timerInt);
+  const elapsed = Math.floor((Date.now()-t0)/1000);
+  const pct = Math.round(score/QUESTIONS.length*100);
+  const note = Math.round((score/QUESTIONS.length)*20*10)/10;
+  const wrongAnswers = results.filter(r => !r.ok).map(r => ({theme: r.t, question: r.q, given: r.chosen, correct: r.right}));
+
+  save({name, score, pct, time: elapsed, date: Date.now()});
+  sendToSheet({
+    name,
+    score,
+    total: QUESTIONS.length,
+    pct,
+    note,
+    time: elapsed,
+    date: Date.now(),
+    wrongAnswers
+  });
+
+  document.getElementById('r-emoji').textContent = pct>=90?'🌟':pct>=70?'😊':'💪';
+  document.getElementById('r-score').textContent = score + ' / ' + QUESTIONS.length;
+  document.getElementById('r-pct').textContent = pct + '% de bonnes réponses · Note : ' + note + ' / 20';
+  document.getElementById('r-msg').textContent = pct>=90?'Masha Allah, excellent travail !':pct>=70?'Très bien, continue comme ça !':'Bien essayé, révise et réessaie !';
+  document.getElementById('r-time').textContent = 'Temps total : ' + pad(Math.floor(elapsed/60)) + ':' + pad(elapsed%60);
+  const rev = document.getElementById('review-list');
+  rev.innerHTML = '';
+  results.forEach(r => {
+    rev.innerHTML += '<div class="review-item"><span class="review-theme">'+r.t+'</span><br><span class="review-q">'+(r.ok?'✅':'❌')+' '+r.q+'</span>'+(r.ok?'':('<div class="review-answer"><span style="color:var(--red);">Toi : '+r.chosen+'</span> → <span style="color:var(--green);">'+r.right+'</span></div>'))+'<div class="review-answer" style="color:var(--muted);">💡 '+r.tip+'</div></div>';
+  });
+  if (pct >= 80) confetti();
+  show('screen-result');
+}
+
+function sendToSheet(payload) {
+  if (!WEBHOOK_URL || WEBHOOK_URL.indexOf('COLLE_ICI') !== -1) return; // webhook pas encore configuré
+  fetch(WEBHOOK_URL, {
+    method: 'POST',
+    mode: 'no-cors', // les apps web Google Apps Script ne renvoient pas d'en-têtes CORS
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // évite le préflight CORS
+    body: JSON.stringify(payload)
+  }).catch(err => console.error('Erreur envoi vers Google Sheet :', err));
+}
+
+function save(e) {
+  try {
+    let d = JSON.parse(localStorage.getItem('quiz_raynoun_complet_v1') || '[]');
+    d.push(e);
+    localStorage.setItem('quiz_raynoun_complet_v1', JSON.stringify(d));
+  } catch(_) {}
+}
+
+function loadRanking() {
+  try {
+    let d = JSON.parse(localStorage.getItem('quiz_raynoun_complet_v1') || '[]');
+    d.sort((a,b) => b.pct-a.pct || a.time-b.time);
+    const el = document.getElementById('ranking-list');
+    if (!d.length) { el.innerHTML = '<p class="empty">Sois le premier à faire le quiz ! 🌟</p>'; return; }
+    el.innerHTML = '';
+    d.slice(0,8).forEach((e,i) => {
+      const cls = i===0?'gold':i===1?'silver':i===2?'bronze':'other';
+      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+      el.innerHTML += '<div class="rank-item"><div class="rank-badge '+cls+'">'+medal+'</div><div class="rank-name">'+e.name+'</div><div class="rank-right"><div class="rank-score">'+e.pct+'%</div><div class="rank-time">'+pad(Math.floor(e.time/60))+':'+pad(e.time%60)+'</div></div></div>';
+    });
+  } catch(_) {}
+}
+
+function goHome() { show('screen-home'); loadRanking(); }
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showTab(btn, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-ranking').style.display = id==='ranking' ? 'block' : 'none';
+  document.getElementById('tab-info').style.display = id==='info' ? 'block' : 'none';
+}
+
+function confetti() {
+  const wrap = document.getElementById('confetti-wrap');
+  wrap.innerHTML = '';
+  const colors = ['#2e7d5e','#c9922a','#e57373','#64b5f6','#81c784','#ffb74d'];
+  for (let i=0; i<60; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti-piece';
+    d.style.cssText = 'left:'+Math.random()*100+'%;top:-10px;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-delay:'+Math.random()*1.5+'s;animation-duration:'+(2+Math.random())+'s;transform:rotate('+Math.random()*360+'deg);';
+    wrap.appendChild(d);
+  }
+  setTimeout(() => wrap.innerHTML = '', 4000);
+}
+
+loadRanking();
+</script>
+</body>
+</html>
